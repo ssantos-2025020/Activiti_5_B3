@@ -1,0 +1,62 @@
+<div class="encabezado">
+  <h2>Movimientos de inventario</h2>
+  <div style="display: flex; gap: 0.75rem;">
+    <button class="btn btn-secondary" (click)="cargar()">↻ Actualizar</button>
+    <a *ngIf="authService.estaAutenticado()" class="btn" routerLink="/movimientos/nuevo">
+      + Registrar movimiento
+    </a>
+  </div>
+</div>
+
+<div class="error-box" *ngIf="errorMensaje">
+  <span>⚠️ {{ errorMensaje }}</span>
+  <button class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" (click)="cargar()">
+    Reintentar
+  </button>
+</div>
+
+<div class="loader-container" *ngIf="cargando">
+  <div class="spinner"></div>
+  <p>Cargando kardex de movimientos...</p>
+</div>
+
+<div class="tabla-container" *ngIf="!cargando && movimientos.length">
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Fecha y Hora</th>
+        <th>Producto</th>
+        <th>Tipo</th>
+        <th>Cantidad</th>
+        <th>Motivo / Referencia</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let mov of movimientos">
+        <td style="color: var(--text-muted); font-size: 0.875rem;">
+          {{ mov.fecha | date: "dd/MM/yyyy HH:mm" }}
+        </td>
+        <td style="font-weight: 700; color: var(--text-main);">
+          {{ mov.producto?.nombre || "—" }}
+        </td>
+        <td>
+          <span [class]="mov.tipo === 'ENTRADA' ? 'badge badge-success' : 'badge badge-danger'">
+            {{ mov.tipo === 'ENTRADA' ? '⬆ ENTRADA' : '⬇ SALIDA' }}
+          </span>
+        </td>
+        <td style="font-weight: 700;">
+          {{ mov.cantidad }}
+        </td>
+        <td style="color: var(--text-muted);">
+          {{ mov.motivo || "—" }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="empty-state" *ngIf="!cargando && !errorMensaje && !movimientos.length">
+  <span>📊</span>
+  <h3>No hay movimientos registrados</h3>
+  <p>El historial de kardex mostrará las entradas y salidas registradas.</p>
+</div>

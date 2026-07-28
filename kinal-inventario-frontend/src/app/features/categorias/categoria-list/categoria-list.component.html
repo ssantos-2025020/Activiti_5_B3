@@ -1,0 +1,55 @@
+<div class="encabezado">
+  <h2>Categorías</h2>
+  <div style="display: flex; gap: 0.75rem;">
+    <button class="btn btn-secondary" (click)="cargar()">
+      ↻ Actualizar
+    </button>
+    <a *ngIf="authService.estaAutenticado()" class="btn" routerLink="/categorias/nuevo">
+      + Nueva categoría
+    </a>
+  </div>
+</div>
+
+<div class="error-box" *ngIf="errorMensaje">
+  <span>⚠️ {{ errorMensaje }}</span>
+  <button class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" (click)="cargar()">
+    Reintentar
+  </button>
+</div>
+
+<div class="loader-container" *ngIf="cargando">
+  <div class="spinner"></div>
+  <p>Cargando categorías del servidor...</p>
+</div>
+
+<div class="tabla-container" *ngIf="!cargando && categorias.length">
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th># Productos</th>
+        <th *ngIf="authService.estaAutenticado()">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let categoria of categorias">
+        <td style="font-weight: 600; color: var(--text-main);">{{ categoria.nombre }}</td>
+        <td style="color: var(--text-muted);">{{ categoria.descripcion || "—" }}</td>
+        <td>
+          <span class="badge badge-info">{{ categoria._count?.productos ?? 0 }} productos</span>
+        </td>
+        <td *ngIf="authService.estaAutenticado()">
+          <a [routerLink]="['/categorias/editar', categoria.id]">Editar</a>
+          <button class="btn-danger" (click)="eliminar(categoria)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="empty-state" *ngIf="!cargando && !errorMensaje && !categorias.length">
+  <span>📁</span>
+  <h3>No hay categorías registradas</h3>
+  <p>Comienza agregando la primera categoría para clasificar el inventario.</p>
+</div>
